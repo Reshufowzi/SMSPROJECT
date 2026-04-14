@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "django-app"
-        REGISTRY = "docker.io"   // change if using ECR
+        DOCKERHUB_USER = "reshma0209"   // 👈 ADD THIS
     }
 
     stages {
@@ -34,11 +34,12 @@ pipeline {
             steps {
                 script {
                     def tag = "${BUILD_NUMBER}"
-                    sh "docker tag $IMAGE_NAME:$tag $DOCKER_USER/$IMAGE_NAME:$tag"
-                    sh "docker tag $IMAGE_NAME:latest $DOCKER_USER/$IMAGE_NAME:latest"
 
-                    sh "docker push $DOCKER_USER/$IMAGE_NAME:$tag"
-                    sh "docker push $DOCKER_USER/$IMAGE_NAME:latest"
+                    sh "docker tag $IMAGE_NAME:$tag $DOCKERHUB_USER/$IMAGE_NAME:$tag"
+                    sh "docker tag $IMAGE_NAME:latest $DOCKERHUB_USER/$IMAGE_NAME:latest"
+
+                    sh "docker push $DOCKERHUB_USER/$IMAGE_NAME:$tag"
+                    sh "docker push $DOCKERHUB_USER/$IMAGE_NAME:latest"
                 }
             }
         }
@@ -50,7 +51,7 @@ pipeline {
                     sh """
                     docker stop django-container || true
                     docker rm django-container || true
-                    docker run -d -p 8000:8000 --name django-container $DOCKER_USER/$IMAGE_NAME:$tag
+                    docker run -d -p 8000:8000 --name django-container $DOCKERHUB_USER/$IMAGE_NAME:$tag
                     """
                 }
             }
